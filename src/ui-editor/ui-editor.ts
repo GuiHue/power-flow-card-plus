@@ -81,7 +81,14 @@ export class PowerFlowCardCascadeEditor extends LitElement implements LovelaceCa
   @state() private _currentConfigPage: ConfigPage = null;
 
   public async setConfig(rawConfig: unknown): Promise<void> {
-    const config = migrateConfig(rawConfig);
+    // Ensure minimal required fields exist before validation.
+    // HA may pass a bare { type } config if getStubConfig() throws.
+    const raw = rawConfig as Record<string, unknown>;
+    const withDefaults = {
+      ...raw,
+      entities: (raw?.entities as Record<string, unknown>) ?? {},
+    };
+    const config = migrateConfig(withDefaults);
     assert(config, cardConfigStruct);
     this._config = config;
   }

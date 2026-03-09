@@ -125,7 +125,6 @@ export class PowerFlowCardCascade extends LitElement {
     this._tryDisconnectAll();
   }
 
-  // do not use ui editor for now, as it is not working
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
     await import("./ui-editor/ui-editor");
     return document.createElement("power-flow-card-cascade-editor");

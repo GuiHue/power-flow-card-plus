@@ -21,7 +21,9 @@ export const defaultValues = {
 export function getDefaultConfig(hass: HomeAssistant): object {
   function checkStrings(entiyId: string, testStrings: string[]): boolean {
     const firstId = getFirstEntityName(entiyId);
-    const friendlyName = hass.states[firstId].attributes.friendly_name;
+    const stateObj = hass.states[firstId];
+    if (!stateObj) return false;
+    const friendlyName = stateObj.attributes?.friendly_name;
     return testStrings.some((str) => firstId.includes(str) || friendlyName?.includes(str));
   }
   const powerEntities = Object.keys(hass.states).filter((entityId) => {
