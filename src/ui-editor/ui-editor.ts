@@ -89,8 +89,15 @@ export class PowerFlowCardCascadeEditor extends LitElement implements LovelaceCa
       entities: (raw?.entities as Record<string, unknown>) ?? {},
     };
     const config = migrateConfig(withDefaults);
-    assert(config, cardConfigStruct);
-    this._config = config;
+    try {
+      assert(config, cardConfigStruct);
+    } catch (e) {
+      // Log but don't throw — superstruct's strict object() rejects unknown
+      // properties (e.g. 'id' injected by HA). Throwing here causes HA to
+      // silently hide the entire editor.
+      console.warn("[power-flow-card-cascade] Editor config validation warning:", (e as Error).message);
+    }
+    this._config = config as PowerFlowCardCascadeConfig;
   }
 
   connectedCallback(): void {
